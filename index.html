@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container-tarefas">
+        <div class="header-container">
+            <h1>Minhas Tarefas</h1>
+            <img src="assets/lista-de-tarefas.png" alt="Ícone lista de tarefas">
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Digite uma nova tarefa...">
+            <button id="addBtn">Adicionar</button>
+        </div>
+        <p id="errorMessage" class="error-message"></p>
+
+        <ul id="taskList">
+            <!-- As tarefas serão inseridas aqui pelo JavaScript -->
+        </ul>
+    </div>
+
+    <div class="container-completed">
+        <div class="completed-header">
+            <h2>Tarefas Concluídas</h2>
+            <button id="clearCompletedBtn" class="clear-btn">Remover</button>
+        </div>
+        <ul id="completedTaskList">
+            <!-- As tarefas concluídas serão movidas para cá -->
+        </ul>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
