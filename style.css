@@ -85,10 +85,8 @@ li {
     gap: 8px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    min-height: 48px;
-    /* Garante altura mínima para tarefas */
-    border-left: 5px solid transparent;
-    /* Adiciona espaço para a cor da prioridade */
+    min-height: 48px; /* Garante altura mínima para tarefas */
+    border-left: 5px solid transparent; /* Adiciona espaço para a cor da prioridade */
 }
 
 li.priority-low {
@@ -128,8 +126,7 @@ li.priority-high {
 }
 
 .task-text {
-    min-width: 0;
-    /* Permite que o texto encolha dentro do flex container */
+    min-width: 0; /* Permite que o texto encolha dentro do flex container */
     word-break: normal;
     overflow-wrap: break-word;
     white-space: normal;
@@ -137,8 +134,7 @@ li.priority-high {
 
 .edit-input {
     flex: 1;
-    min-width: 0;
-    /* Permite que o input encolha */
+    min-width: 0; /* Permite que o input encolha */
     padding: 5px;
     font-size: 16px;
     margin-right: 10px;
@@ -152,8 +148,8 @@ li.priority-high {
     border-radius: 4px;
     border: 1px solid #ccc;
     font-size: 0.9em;
-    margin-right: 5px;
-    /* Espaçamento entre o seletor e os botões */
+    margin-right: 50px; 
+    width: 10em; 
 }
 
 .completed-task {
