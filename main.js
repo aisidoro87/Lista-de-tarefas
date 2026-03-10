@@ -1,20 +1,29 @@
 const taskInput = document.getElementById('taskInput');
 const addBtn = document.getElementById('addBtn');
-const taskList = document.getElementById('taskList');
+const lowPriorityList = document.getElementById('lowPriorityList');
+const mediumPriorityList = document.getElementById('mediumPriorityList');
+const highPriorityList = document.getElementById('highPriorityList');
+const unprioritizedTaskList = document.getElementById('unprioritizedTaskList');
+const unprioritizedContainer = document.getElementById('unprioritized-container');
 const completedTaskList = document.getElementById('completedTaskList');
 const errorMessage = document.getElementById('errorMessage');
-const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+const selectAllCompleted = document.getElementById('selectAllCompleted');
+const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
 
-// Função para adicionar tarefa
-function addTask() {
-    const text = taskInput.value.trim();
-    if (text === '') {
-        errorMessage.textContent = 'Por favor, digite uma tarefa.';
-        return;
-    }
-    errorMessage.textContent = ''; // Limpa a mensagem de erro se houver
+// Função para mostrar/esconder a seção de tarefas não priorizadas
+function updateUnprioritizedVisibility() {
+    unprioritizedContainer.style.display = unprioritizedTaskList.children.length > 0 ? 'block' : 'none';
+}
 
+// Função para criar o nó de uma tarefa (o elemento <li> com seus botões)
+function createTaskNode(text, initialPriority = null) { // O padrão agora é nulo (não priorizado)
     const li = document.createElement('li');
+    if (initialPriority) {
+        li.classList.add(`priority-${initialPriority}`);
+        li.dataset.priority = initialPriority;
+    } else {
+        li.dataset.priority = ''; // Representa não priorizado
+    }
     
     const span = document.createElement('span');
     span.className = 'task-text';
@@ -22,6 +31,43 @@ function addTask() {
     
     const divActions = document.createElement('div');
     divActions.className = 'actions';
+
+    // Priority Selector (new element)
+    const prioritySelect = document.createElement('select');
+    prioritySelect.className = 'priority-select';
+    prioritySelect.innerHTML = `
+        <option value="" disabled selected>Priorizar</option>
+        <option value="low">Baixa</option>
+        <option value="medium">Média</option>
+        <option value="high">Alta</option>
+    `;
+    if (initialPriority) {
+        prioritySelect.value = initialPriority;
+    }
+
+    prioritySelect.addEventListener('change', (e) => {
+        const newPriority = e.target.value;
+        const oldPriority = li.dataset.priority;
+
+        if (newPriority !== oldPriority) {
+            if (oldPriority) {
+                li.classList.remove(`priority-${oldPriority}`);
+            }
+            li.classList.add(`priority-${newPriority}`);
+            li.dataset.priority = newPriority;
+
+            // Move the task to the correct list
+            let targetList;
+            if (newPriority === 'low') targetList = lowPriorityList;
+            else if (newPriority === 'medium') targetList = mediumPriorityList;
+            else targetList = highPriorityList; // high
+            
+            targetList.appendChild(li); // Appends to the end of the new list
+
+            updateUnprioritizedVisibility();
+            saveTasks(); // Save after priority change
+        }
+    });
 
     // Botão de Editar
     const editBtn = document.createElement('button');
@@ -38,13 +84,16 @@ function addTask() {
                 span.style.display = '';
                 editBtn.innerHTML = '&#9998;';
                 li.classList.remove('editing');
+                prioritySelect.style.display = ''; // Mostra o seletor de prioridade novamente
                 // Mostra os outros botões novamente
                 completeBtn.style.display = '';
                 deleteBtn.style.display = '';
+                saveTasks(); // Salva após editar
             }
         } else {
             span.style.display = 'none';
             completeBtn.style.display = 'none'; // Esconde o botão de concluir
+            prioritySelect.style.display = 'none'; // Esconde o seletor de prioridade durante a edição
             deleteBtn.style.display = 'none';   // Esconde o botão de excluir
             const input = document.createElement('input');
             input.type = 'text';
@@ -62,8 +111,15 @@ function addTask() {
     completeBtn.className = 'action-btn complete-btn';
     completeBtn.innerHTML = '&#10004;'; // Símbolo de check
     completeBtn.onclick = () => {
+        li.querySelector('.priority-select').remove(); // Remove o seletor de prioridade da tarefa concluída
         li.classList.add('completed-task');
         divActions.remove(); // Remove os botões de ação originais
+
+        // Cria o checkbox para seleção individual
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'completed-checkbox';
+        li.prepend(checkbox); // Adiciona o checkbox no início do <li>
 
         // Cria um novo container para os itens da tarefa concluída
         const completedActionsDiv = document.createElement('div');
@@ -76,21 +132,13 @@ function addTask() {
             day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
 
-        // Cria o botão de excluir para a tarefa concluída
-        const singleDeleteBtn = document.createElement('button');
-        singleDeleteBtn.className = 'action-btn delete-btn';
-        singleDeleteBtn.innerHTML = '&#128465;';
-        singleDeleteBtn.onclick = () => {
-            if (confirm('Tem certeza que deseja excluir esta tarefa concluída?')) {
-                li.remove();
-            }
-        };
-
         completedActionsDiv.appendChild(completionDate);
-        completedActionsDiv.appendChild(singleDeleteBtn);
         li.appendChild(completedActionsDiv);
 
         completedTaskList.appendChild(li);
+        updateUnprioritizedVisibility();
+        updateCompletedActions();
+        saveTasks(); // Salva após concluir
     };
 
     // Botão de Excluir
@@ -112,7 +160,11 @@ function addTask() {
         `;
         li.appendChild(confirmDiv);
 
-        confirmDiv.querySelector('.btn-yes').onclick = () => li.remove();
+        confirmDiv.querySelector('.btn-yes').onclick = () => {
+            li.remove();
+            updateUnprioritizedVisibility();
+            saveTasks(); // Salva após excluir
+        };
         confirmDiv.querySelector('.btn-no').onclick = () => {
             confirmDiv.remove();
             children.forEach(child => child.style.display = '');
@@ -123,12 +175,88 @@ function addTask() {
     divActions.appendChild(editBtn);
     divActions.appendChild(completeBtn);
     divActions.appendChild(deleteBtn);
+
+    li.appendChild(prioritySelect);
     li.appendChild(span);
     li.appendChild(divActions);
     
-    taskList.appendChild(li);
+    return li;
+}
+
+// Função para adicionar tarefa (chamada pelo botão/Enter)
+function addTask() {
+    const text = taskInput.value.trim();
+    if (text === '') {
+        errorMessage.textContent = 'Por favor, digite uma tarefa.';
+        return;
+    }
+    errorMessage.textContent = ''; // Limpa a mensagem de erro se houver
+
+    // Adiciona a tarefa à lista de não priorizadas por padrão
+    const taskNode = createTaskNode(text, null);
+    unprioritizedTaskList.appendChild(taskNode);
+
+    updateUnprioritizedVisibility(); // Mostra o container se estiver oculto
+
+    saveTasks(); // Salva ao adicionar nova tarefa
+
     taskInput.value = '';
     taskInput.focus();
+}
+
+// Função para salvar todas as tarefas no Local Storage
+function saveTasks() {
+    const tasks = [];
+    // Salva tarefas pendentes
+    document.querySelectorAll('#unprioritizedTaskList li, .task-list-column li').forEach(li => {
+        tasks.push({
+            text: li.querySelector('.task-text').textContent,
+            completed: false,
+            priority: li.dataset.priority
+        });
+    });
+    // Salva tarefas concluídas
+    document.querySelectorAll('#completedTaskList li').forEach(li => {
+        tasks.push({
+            text: li.querySelector('.task-text').textContent,
+            completed: true,
+            completionDate: li.querySelector('.completion-date').textContent
+        });
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// Função para carregar tarefas do Local Storage ao iniciar
+function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    tasks.forEach(task => {
+        if (task.completed) {
+            const li = document.createElement('li');
+            li.className = 'completed-task';
+            // Usar innerHTML aqui é seguro pois os dados vêm do nosso próprio localStorage
+            li.innerHTML = `
+                <div class="completed-task-content">
+                    <span class="task-text">${task.text}</span>
+                    <div class="actions">
+                        <small class="completion-date">${task.completionDate}</small>
+                    </div>
+                </div>
+                <input type="checkbox" class="completed-checkbox">
+            `;
+            completedTaskList.appendChild(li);
+        } else {
+            const taskNode = createTaskNode(task.text, task.priority || null);
+            if (!task.priority) {
+                unprioritizedTaskList.appendChild(taskNode);
+            } else if (task.priority === 'low') {
+                lowPriorityList.appendChild(taskNode);
+            } else if (task.priority === 'medium') {
+                mediumPriorityList.appendChild(taskNode);
+            } else { // high
+                highPriorityList.appendChild(taskNode);
+            }
+        }
+    });
 }
 
 addBtn.addEventListener('click', addTask);
@@ -143,9 +271,61 @@ taskInput.addEventListener('input', () => {
     if (errorMessage.textContent) errorMessage.textContent = '';
 });
 
-// Limpar todas as tarefas concluídas
-clearCompletedBtn.addEventListener('click', () => {
-    if (completedTaskList.children.length > 0 && confirm('Tem certeza que deseja limpar todas as tarefas concluídas?')) {
-        completedTaskList.innerHTML = '';
+// Função para atualizar a UI de ações em massa das tarefas concluídas
+function updateCompletedActions() {
+    const checkboxes = completedTaskList.querySelectorAll('.completed-checkbox');
+    const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+    // Mostra ou esconde o checkbox "selecionar todos" se houver tarefas concluídas
+    selectAllCompleted.style.display = checkboxes.length > 0 ? 'inline-block' : 'none';
+
+    // Mostra ou esconde o botão de excluir selecionados
+    deleteSelectedBtn.style.display = checkedCount > 0 ? 'inline-block' : 'none';
+
+    // Atualiza o estado do checkbox "selecionar todos"
+    if (checkboxes.length > 0 && checkedCount === checkboxes.length) {
+        selectAllCompleted.checked = true;
+        selectAllCompleted.indeterminate = false;
+    } else if (checkedCount > 0) {
+        selectAllCompleted.checked = false;
+        selectAllCompleted.indeterminate = true;
+    } else {
+        selectAllCompleted.checked = false;
+        selectAllCompleted.indeterminate = false;
     }
+}
+
+// Evento para o checkbox "selecionar todos"
+selectAllCompleted.addEventListener('change', () => {
+    const checkboxes = completedTaskList.querySelectorAll('.completed-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = selectAllCompleted.checked;
+    });
+    updateCompletedActions();
+});
+
+// Evento para o botão "excluir selecionados"
+deleteSelectedBtn.addEventListener('click', () => {
+    const checkedCheckboxes = completedTaskList.querySelectorAll('.completed-checkbox:checked');
+    if (checkedCheckboxes.length > 0 && confirm(`Tem certeza que deseja excluir as ${checkedCheckboxes.length} tarefas selecionadas?`)) {
+        checkedCheckboxes.forEach(cb => {
+            cb.closest('li').remove();
+        });
+        saveTasks(); // Salva após excluir selecionados
+        updateCompletedActions();
+    }
+});
+
+// Delegação de evento para os checkboxes individuais
+completedTaskList.addEventListener('change', (e) => {
+    if (e.target.matches('.completed-checkbox')) {
+        updateCompletedActions();
+    }
+});
+
+// Carrega as tarefas salvas e atualiza a UI ao iniciar a página
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
+    updateCompletedActions();
+    updateUnprioritizedVisibility();
 });
