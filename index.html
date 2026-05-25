@@ -17,29 +17,24 @@
 
         <div class="input-group">
             <input type="text" id="taskInput" placeholder="Digite uma nova tarefa...">
+
+            <select id="priorityInput">
+                <option value="">Prioridade</option>
+                <option value="low">Baixa</option>
+                <option value="medium">Média</option>
+                <option value="high">Alta</option>
+            </select>
+
             <button id="addBtn">Adicionar</button>
         </div>
+
         <p id="errorMessage" class="error-message"></p>
 
         <div id="unprioritized-container" style="display: none;">
-            <h3>Novas Tarefas</h3>
+            <h3>Tarefas pendentes</h3>
             <ul id="unprioritizedTaskList"></ul>
         </div>
 
-        <div class="tasks-container">
-            <div class="priority-column">
-                <h3 class="baixa">Baixa Prioridade</h3>
-                <ul id="lowPriorityList" class="task-list-column"></ul>
-            </div>
-            <div class="priority-column">
-                <h3 class="media">Média Prioridade</h3>
-                <ul id="mediumPriorityList" class="task-list-column"></ul>
-            </div>
-            <div class="priority-column">
-                <h3 class="alta">Alta Prioridade</h3>
-                <ul id="highPriorityList" class="task-list-column"></ul>
-            </div>
-        </div>
     </div>
 
     <div class="container-completed">

@@ -9,6 +9,7 @@ const completedTaskList = document.getElementById('completedTaskList');
 const errorMessage = document.getElementById('errorMessage');
 const selectAllCompleted = document.getElementById('selectAllCompleted');
 const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+const priorityInput = document.getElementById('priorityInput');
 
 // Função para mostrar/esconder a seção de tarefas não priorizadas
 function updateUnprioritizedVisibility() {
@@ -24,50 +25,13 @@ function createTaskNode(text, initialPriority = null) { // O padrão agora é nu
     } else {
         li.dataset.priority = ''; // Representa não priorizado
     }
-    
+
     const span = document.createElement('span');
     span.className = 'task-text';
     span.textContent = text;
-    
+
     const divActions = document.createElement('div');
     divActions.className = 'actions';
-
-    // Priority Selector (new element)
-    const prioritySelect = document.createElement('select');
-    prioritySelect.className = 'priority-select';
-    prioritySelect.innerHTML = `
-        <option value="" disabled selected>Priorizar</option>
-        <option value="low">Baixa</option>
-        <option value="medium">Média</option>
-        <option value="high">Alta</option>
-    `;
-    if (initialPriority) {
-        prioritySelect.value = initialPriority;
-    }
-
-    prioritySelect.addEventListener('change', (e) => {
-        const newPriority = e.target.value;
-        const oldPriority = li.dataset.priority;
-
-        if (newPriority !== oldPriority) {
-            if (oldPriority) {
-                li.classList.remove(`priority-${oldPriority}`);
-            }
-            li.classList.add(`priority-${newPriority}`);
-            li.dataset.priority = newPriority;
-
-            // Move the task to the correct list
-            let targetList;
-            if (newPriority === 'low') targetList = lowPriorityList;
-            else if (newPriority === 'medium') targetList = mediumPriorityList;
-            else targetList = highPriorityList; // high
-            
-            targetList.appendChild(li); // Appends to the end of the new list
-
-            updateUnprioritizedVisibility();
-            saveTasks(); // Save after priority change
-        }
-    });
 
     // Botão de Editar
     const editBtn = document.createElement('button');
@@ -77,15 +41,13 @@ function createTaskNode(text, initialPriority = null) { // O padrão agora é nu
         if (li.classList.contains('editing')) {
             const input = li.querySelector('.edit-input');
             const newText = input.value.trim();
-            
+
             if (newText !== '') {
                 span.textContent = newText;
                 input.remove();
                 span.style.display = '';
                 editBtn.innerHTML = '&#9998;';
                 li.classList.remove('editing');
-                prioritySelect.style.display = ''; // Mostra o seletor de prioridade novamente
-                // Mostra os outros botões novamente
                 completeBtn.style.display = '';
                 deleteBtn.style.display = '';
                 saveTasks(); // Salva após editar
@@ -93,7 +55,6 @@ function createTaskNode(text, initialPriority = null) { // O padrão agora é nu
         } else {
             span.style.display = 'none';
             completeBtn.style.display = 'none'; // Esconde o botão de concluir
-            prioritySelect.style.display = 'none'; // Esconde o seletor de prioridade durante a edição
             deleteBtn.style.display = 'none';   // Esconde o botão de excluir
             const input = document.createElement('input');
             input.type = 'text';
@@ -110,8 +71,9 @@ function createTaskNode(text, initialPriority = null) { // O padrão agora é nu
     const completeBtn = document.createElement('button');
     completeBtn.className = 'action-btn complete-btn';
     completeBtn.innerHTML = '&#10004;'; // Símbolo de check
+
     completeBtn.onclick = () => {
-        li.querySelector('.priority-select').remove(); // Remove o seletor de prioridade da tarefa concluída
+        /*li.querySelector('.priority-select').remove(); */ // Remove o seletor de prioridade da tarefa concluída
         li.classList.add('completed-task');
         divActions.remove(); // Remove os botões de ação originais
 
@@ -176,24 +138,32 @@ function createTaskNode(text, initialPriority = null) { // O padrão agora é nu
     divActions.appendChild(completeBtn);
     divActions.appendChild(deleteBtn);
 
-    li.appendChild(prioritySelect);
+    /*li.appendChild(prioritySelect);*/
     li.appendChild(span);
     li.appendChild(divActions);
-    
+
     return li;
 }
 
 // Função para adicionar tarefa (chamada pelo botão/Enter)
 function addTask() {
     const text = taskInput.value.trim();
+    const priority = priorityInput.value;
+
     if (text === '') {
         errorMessage.textContent = 'Por favor, digite uma tarefa.';
         return;
     }
-    errorMessage.textContent = ''; // Limpa a mensagem de erro se houver
+
+    if (priority === '') {
+        errorMessage.textContent = 'Por favor, escolha uma prioridade.';
+        return;
+    }
+
+    errorMessage.textContent = '';// Limpa a mensagem de erro se houver
 
     // Adiciona a tarefa à lista de não priorizadas por padrão
-    const taskNode = createTaskNode(text, null);
+    const taskNode = createTaskNode(text, priority); // Passa a prioridade selecionada para a função de criação do nó
     unprioritizedTaskList.appendChild(taskNode);
 
     updateUnprioritizedVisibility(); // Mostra o container se estiver oculto
@@ -220,7 +190,8 @@ function saveTasks() {
         tasks.push({
             text: li.querySelector('.task-text').textContent,
             completed: true,
-            completionDate: li.querySelector('.completion-date').textContent
+            completionDate: li.querySelector('.completion-date').textContent,
+            priority: li.dataset.priority
         });
     });
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -233,16 +204,23 @@ function loadTasks() {
         if (task.completed) {
             const li = document.createElement('li');
             li.className = 'completed-task';
-            // Usar innerHTML aqui é seguro pois os dados vêm do nosso próprio localStorage
+
+            if (task.priority) {
+                li.classList.add(`priority-${task.priority}`);
+                li.dataset.priority = task.priority;
+            }
+
             li.innerHTML = `
+                <input type="checkbox" class="completed-checkbox">
+
                 <div class="completed-task-content">
                     <span class="task-text">${task.text}</span>
                     <div class="actions">
                         <small class="completion-date">${task.completionDate}</small>
                     </div>
                 </div>
-                <input type="checkbox" class="completed-checkbox">
             `;
+
             completedTaskList.appendChild(li);
         } else {
             const taskNode = createTaskNode(task.text, task.priority || null);
@@ -262,8 +240,8 @@ function loadTasks() {
 addBtn.addEventListener('click', addTask);
 
 // Permitir adicionar com a tecla Enter
-taskInput.addEventListener('keypress', (e) => { 
-    if(e.key === 'Enter') addTask(); 
+taskInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addTask();
 });
 
 // Limpar mensagem de erro ao digitar

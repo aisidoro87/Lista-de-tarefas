@@ -152,11 +152,6 @@ li.priority-high {
     width: 10em; 
 }
 
-.completed-task {
-    flex-direction: row;
-    align-items: center;
-}
-
 .completed-task .task-text {
     text-decoration: line-through;
     color: #6c757d;
@@ -311,8 +306,15 @@ li.priority-high {
 }
 
 .completed-task {
-    border: 2px solid transparent;
-    transition: border 0.2s ease;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+}
+
+.completed-task:hover {
+    border-color: #b6adad;
 }
 
 .completed-task:hover {
@@ -326,11 +328,15 @@ li.priority-high {
     border-radius: 4px;
     padding: 10px;
     min-height: 100px;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     transition: border 0.2s ease;
+    border-radius: 4px;
+    background-color: #f8f4f4;
+
 }
 
 .priority-column:hover {
+    background-color: #f0eaea;
     border: solid 1px #b6adad;
 }
 
