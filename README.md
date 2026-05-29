@@ -51,3 +51,5 @@ Não há necessidade de instalação de dependências. Basta seguir os passos ab
 ├── README.md
 └── style.css
 ```
+
+ ## 🌐Desenvolvido com ☕ e ❤️ por Anderson Isidoro
