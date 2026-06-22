@@ -34,6 +34,14 @@ h1 {
     box-shadow: 0 2px 4px;
 }
 
+#priorityInput {
+    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 .input-group {
     display: flex;
     gap: 10px;
@@ -67,6 +75,19 @@ h1 {
 
 #addBtn:hover {
     background-color: #055755;
+}
+
+.btn-filter {
+    cursor: pointer;
+    background-color: #e9ebec;
+    border: 1px solid #055755;
+    color: #055755;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.btn-filter:hover {
+    background-color: #ccc;
 }
 
 ul {
@@ -336,6 +357,10 @@ li.priority-high {
     border-radius: 4px;
     background-color: #f8f4f4;
 
+}
+
+.priority-column ul {
+    min-height: 150px;
 }
 
 .priority-column:hover {

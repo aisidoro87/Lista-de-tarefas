@@ -10,6 +10,10 @@ const errorMessage = document.getElementById('errorMessage');
 const selectAllCompleted = document.getElementById('selectAllCompleted');
 const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
 const priorityInput = document.getElementById('priorityInput');
+let draggedTask = null; // Variável para armazenar a tarefa sendo arrastada
+const lowPriorityColumn = document.getElementById('low-priority');
+const mediumPriorityColumn = document.getElementById('medium-priority');
+const highPriorityColumn = document.getElementById('high-priority');
 
 // Função para mostrar/esconder a seção de tarefas não priorizadas
 function updateUnprioritizedVisibility() {
@@ -19,6 +23,13 @@ function updateUnprioritizedVisibility() {
 // Função para criar o nó de uma tarefa (o elemento <li> com seus botões)
 function createTaskNode(text, initialPriority = null) {
     const li = document.createElement('li');
+
+    li.draggable = true;// Permite arrastar a tarefa para reordenar ou mudar de coluna
+
+    li.addEventListener('dragstart', () => { // Evento para iniciar o arrasto da tarefa
+        draggedTask = li; // Armazena a tarefa sendo arrastada
+    });
+
     if (initialPriority) {
         li.classList.add(`priority-${initialPriority}`);
         li.dataset.priority = initialPriority;
@@ -84,22 +95,25 @@ function createTaskNode(text, initialPriority = null) {
         // Container para organizar Texto e Data em coluna
         const contentDiv = document.createElement('div');
         contentDiv.className = 'completed-task-content';
-        
+
         // Move o span existente para o container
         contentDiv.appendChild(span);
 
         const completedActionsDiv = document.createElement('div');
         completedActionsDiv.className = 'actions';
 
+        // Adiciona a data de conclusão
         const completionDate = document.createElement('small');
         completionDate.className = 'completion-date';
-        completionDate.textContent = new Date().toLocaleString('pt-BR', {
-            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        });
+
+        const agora = new Date();
+        const data = agora.toLocaleDateString('pt-BR');
+        const hora = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        completionDate.textContent = `Tarefa concluída em ${data} às ${hora}`;
 
         completedActionsDiv.appendChild(completionDate);
         contentDiv.appendChild(completedActionsDiv);
-        
+
         li.appendChild(contentDiv);
 
         completedTaskList.appendChild(li);
@@ -167,7 +181,7 @@ function addTask() {
     errorMessage.textContent = '';
 
     const taskNode = createTaskNode(text, priority);
-    
+
     if (priority === 'low') {
         lowPriorityList.appendChild(taskNode);
     } else if (priority === 'medium') {
@@ -178,10 +192,11 @@ function addTask() {
         unprioritizedTaskList.appendChild(taskNode);
     }
 
-    updateUnprioritizedVisibility(); 
-    saveTasks(); 
+    updateUnprioritizedVisibility();
+    saveTasks();
 
     taskInput.value = '';
+    priorityInput.value = '';
     taskInput.focus();
 }
 
@@ -211,7 +226,7 @@ function saveTasks() {
         }
     });
     localStorage.setItem('tasks', JSON.stringify(tasks));
-}
+};
 
 // Função para carregar do Local Storage
 function loadTasks() {
@@ -247,7 +262,7 @@ function loadTasks() {
             actionsDiv.appendChild(dateSmall);
             contentDiv.appendChild(span);
             contentDiv.appendChild(actionsDiv);
-            
+
             li.appendChild(checkbox);
             li.appendChild(contentDiv);
 
@@ -321,7 +336,61 @@ completedTaskList.addEventListener('change', (e) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+lowPriorityColumn.addEventListener('dragover', (e) => {// Permite que a tarefa seja arrastada para esta coluna
+    e.preventDefault();
+});
+
+mediumPriorityColumn.addEventListener('dragover', (e) => {// Permite que a tarefa seja arrastada para esta coluna
+    e.preventDefault();
+});
+
+highPriorityColumn.addEventListener('dragover', (e) => { // Permite que a tarefa seja arrastada para esta coluna
+    e.preventDefault();
+});
+
+lowPriorityColumn.addEventListener('drop', () => {
+    lowPriorityList.appendChild(draggedTask);
+    draggedTask.classList.remove(
+        'priority-low',
+        'priority-medium',
+        'priority-high'
+    );
+    draggedTask.classList.add('priority-low');
+    draggedTask.dataset.priority = 'low';
+
+    saveTasks();
+});
+
+mediumPriorityColumn.addEventListener('drop', () => {
+    mediumPriorityList.appendChild(draggedTask);
+    draggedTask.classList.remove(
+        'priority-low',
+        'priority-medium',
+        'priority-high'
+    );
+
+    draggedTask.classList.add('priority-medium');
+    draggedTask.dataset.priority = 'medium';
+
+    saveTasks();
+});
+
+highPriorityColumn.addEventListener('drop', () => {
+
+    highPriorityList.appendChild(draggedTask);
+    draggedTask.classList.remove(
+        'priority-low',
+        'priority-medium',
+        'priority-high'
+    );
+
+    draggedTask.classList.add('priority-high');
+    draggedTask.dataset.priority = 'high';
+
+    saveTasks();
+});
+
+document.addEventListener('DOMContentLoaded', () => { // Carrega as tarefas do Local Storage ao iniciar a aplicação
     loadTasks();
     updateCompletedActions();
     updateUnprioritizedVisibility();
