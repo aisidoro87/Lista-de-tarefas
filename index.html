@@ -11,12 +11,16 @@
 <body>
     <div class="container-tarefas">
         <div class="header-container">
-            <h1>Minhas Tarefas</h1>
+            <h1 class="main-title">Minhas Tarefas</h1>
             <img src="assets/lista-de-tarefas.png" alt="Ícone lista de tarefas">
         </div>
 
         <div class="input-group">
+
+            <label for="taskInput" class="sr-only">Nova tarefa</label>
             <input type="text" id="taskInput" placeholder="Digite uma nova tarefa...">
+
+                <label for="priorityInput" class="sr-only">Prioridade da tarefa</label>
 
             <select id="priorityInput">
                 <option value="">Prioridade</option>
@@ -25,7 +29,7 @@
                 <option value="high">Alta</option>
             </select>
 
-            <button id="addBtn">Adicionar</button>
+            <button id="addBtn" type="button">Adicionar</button>
         </div>
 
         <p id="errorMessage" class="error-message"></p>
@@ -36,22 +40,18 @@
             <button class="btn-filter concluidas">Concluídas</button>
         </div>
 
-        <div id="unprioritized-container" style="display: none;">
-            <h3>Tarefas pendentes</h3>
-            <ul id="unprioritizedTaskList"></ul>
-        </div>
-
+        <h2 class="section-title">Tarefas Pendentes</h2>
         <div class="tasks-container">
             <div class="priority-column" id="low-priority">
-                <h3 class="baixa">Baixa</h3>
+                <h2 class="baixa">Baixa</h2>
                 <ul id="lowPriorityList"></ul>
             </div>
             <div class="priority-column" id="medium-priority">
-                <h3 class="media">Média</h3>
+                <h2 class="media">Média</h2>
                 <ul id="mediumPriorityList"></ul>
             </div>
             <div class="priority-column" id="high-priority">
-                <h3 class="alta">Alta</h3>
+                <h2 class="alta">Alta</h2>
                 <ul id="highPriorityList"></ul>
             </div>
         </div>
@@ -60,9 +60,10 @@
 
     <div class="container-completed">
         <div class="completed-header">
-            <h2>Tarefas Concluídas</h2>
+            <h2 class="section-title">Tarefas Concluídas</h2>
             <div class="completed-bulk-actions">
-                <input type="checkbox" id="selectAllCompleted" title="Selecionar Todas">
+
+                <input type="checkbox" id="selectAllCompleted" aria-label="Selecionar todas as tarefas concluídas" title="Selecionar Todas">
                 <button id="deleteSelectedBtn" class="clear-btn" style="display: none;">Excluir Selecionados</button>
             </div>
         </div>

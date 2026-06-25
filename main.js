@@ -3,8 +3,6 @@ const addBtn = document.getElementById('addBtn');
 const lowPriorityList = document.getElementById('lowPriorityList');
 const mediumPriorityList = document.getElementById('mediumPriorityList');
 const highPriorityList = document.getElementById('highPriorityList');
-const unprioritizedTaskList = document.getElementById('unprioritizedTaskList');
-const unprioritizedContainer = document.getElementById('unprioritized-container');
 const completedTaskList = document.getElementById('completedTaskList');
 const errorMessage = document.getElementById('errorMessage');
 const selectAllCompleted = document.getElementById('selectAllCompleted');
@@ -15,9 +13,37 @@ const lowPriorityColumn = document.getElementById('low-priority');
 const mediumPriorityColumn = document.getElementById('medium-priority');
 const highPriorityColumn = document.getElementById('high-priority');
 
-// Função para mostrar/esconder a seção de tarefas não priorizadas
-function updateUnprioritizedVisibility() {
-    unprioritizedContainer.style.display = unprioritizedTaskList.children.length > 0 ? 'block' : 'none';
+let currentFilter = 'todas'; // Filtro ativo padrão
+
+// Função para aplicar os filtros de tarefas (Todas, Pendentes, Concluídas)
+function applyFilter(filter) {
+    currentFilter = filter;
+
+    const tasksContainer = document.querySelector('.tasks-container');
+    const completedContainer = document.querySelector('.container-completed');
+
+    // Atualiza a classe ativa nos botões de filtro
+    document.querySelectorAll('.btn-filter').forEach(btn => {
+        if (btn.classList.contains(currentFilter)) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Controla a visibilidade dos contêineres de tarefas pendentes
+    if (currentFilter === 'concluidas') {
+        tasksContainer.style.display = 'none';
+    } else {
+        tasksContainer.style.display = 'flex';
+    }
+
+    // Controla a visibilidade do contêiner de tarefas concluídas
+    if (currentFilter === 'pendentes') {
+        completedContainer.style.display = 'none';
+    } else {
+        completedContainer.style.display = 'block';
+    }
 }
 
 // Função para criar o nó de uma tarefa (o elemento <li> com seus botões)
@@ -46,6 +72,7 @@ function createTaskNode(text, initialPriority = null) {
 
     // Botão de Editar
     const editBtn = document.createElement('button');
+    editBtn.setAttribute('aria-label', 'Editar tarefa');
     editBtn.className = 'action-btn edit-btn';
     editBtn.innerHTML = '&#9998;'; // Símbolo de lápis
     editBtn.onclick = () => {
@@ -57,7 +84,8 @@ function createTaskNode(text, initialPriority = null) {
                 span.textContent = newText;
                 input.remove();
                 span.style.display = '';
-                editBtn.innerHTML = '&#9998;';
+                editBtn.innerHTML = '&#9998;';// Retorna o símbolo de lápis
+                editBtn.setAttribute('aria-label', 'Editar tarefa');
                 li.classList.remove('editing');
                 completeBtn.style.display = '';
                 deleteBtn.style.display = '';
@@ -74,6 +102,7 @@ function createTaskNode(text, initialPriority = null) {
             li.insertBefore(input, divActions);
             input.focus();
             editBtn.innerHTML = '&#10004;';
+            editBtn.setAttribute('aria-label', 'Salvar alteração');
             li.classList.add('editing');
         }
     };
@@ -82,6 +111,7 @@ function createTaskNode(text, initialPriority = null) {
     const completeBtn = document.createElement('button');
     completeBtn.className = 'action-btn complete-btn';
     completeBtn.innerHTML = '&#10004;'; // Símbolo de check
+    completeBtn.setAttribute('aria-label', 'Concluir tarefa');
 
     completeBtn.onclick = () => {
         li.classList.add('completed-task');
@@ -117,13 +147,13 @@ function createTaskNode(text, initialPriority = null) {
         li.appendChild(contentDiv);
 
         completedTaskList.appendChild(li);
-        updateUnprioritizedVisibility();
         updateCompletedActions();
         saveTasks();
     };
 
     // Botão de Excluir
     const deleteBtn = document.createElement('button');
+    deleteBtn.setAttribute('aria-label', 'Excluir tarefa')
     deleteBtn.className = 'action-btn delete-btn';
     deleteBtn.innerHTML = '&#128465;'; // Símbolo de lixeira
     deleteBtn.onclick = () => {
@@ -143,7 +173,6 @@ function createTaskNode(text, initialPriority = null) {
 
         confirmDiv.querySelector('.btn-yes').onclick = () => {
             li.remove();
-            updateUnprioritizedVisibility();
             saveTasks();
         };
         confirmDiv.querySelector('.btn-no').onclick = () => {
@@ -188,12 +217,13 @@ function addTask() {
         mediumPriorityList.appendChild(taskNode);
     } else if (priority === 'high') {
         highPriorityList.appendChild(taskNode);
-    } else {
-        unprioritizedTaskList.appendChild(taskNode);
-    }
+    };
 
-    updateUnprioritizedVisibility();
     saveTasks();
+
+    if (currentFilter === 'concluidas') {
+        applyFilter('todas');
+    }
 
     taskInput.value = '';
     priorityInput.value = '';
@@ -203,7 +233,7 @@ function addTask() {
 // Função para salvar no Local Storage
 function saveTasks() {
     const tasks = [];
-    document.querySelectorAll('#unprioritizedTaskList li, .priority-column li').forEach(li => {
+    document.querySelectorAll('.priority-column li').forEach(li => {
         const textElement = li.querySelector('.task-text');
         if (textElement) {
             tasks.push({
@@ -268,14 +298,13 @@ function loadTasks() {
 
             completedTaskList.appendChild(li);
         } else {
-            const taskNode = createTaskNode(task.text, task.priority || null);
-            if (!task.priority) {
-                unprioritizedTaskList.appendChild(taskNode);
-            } else if (task.priority === 'low') {
+            const priority = task.priority || 'low'; // Se a tarefa antiga não tiver prioridade, define como 'low'                                      
+            const taskNode = createTaskNode(task.text, priority);
+            if (priority === 'low') {
                 lowPriorityList.appendChild(taskNode);
-            } else if (task.priority === 'medium') {
+            } else if (priority === 'medium') {
                 mediumPriorityList.appendChild(taskNode);
-            } else if (task.priority === 'high') {
+            } else if (priority === 'high') {
                 highPriorityList.appendChild(taskNode);
             }
         }
@@ -349,6 +378,7 @@ highPriorityColumn.addEventListener('dragover', (e) => { // Permite que a tarefa
 });
 
 lowPriorityColumn.addEventListener('drop', () => {
+    if (!draggedTask) return;
     lowPriorityList.appendChild(draggedTask);
     draggedTask.classList.remove(
         'priority-low',
@@ -362,6 +392,7 @@ lowPriorityColumn.addEventListener('drop', () => {
 });
 
 mediumPriorityColumn.addEventListener('drop', () => {
+    if (!draggedTask) return;
     mediumPriorityList.appendChild(draggedTask);
     draggedTask.classList.remove(
         'priority-low',
@@ -376,7 +407,7 @@ mediumPriorityColumn.addEventListener('drop', () => {
 });
 
 highPriorityColumn.addEventListener('drop', () => {
-
+    if (!draggedTask) return;
     highPriorityList.appendChild(draggedTask);
     draggedTask.classList.remove(
         'priority-low',
@@ -392,6 +423,12 @@ highPriorityColumn.addEventListener('drop', () => {
 
 document.addEventListener('DOMContentLoaded', () => { // Carrega as tarefas do Local Storage ao iniciar a aplicação
     loadTasks();
+
+    // Adiciona ouvintes de evento para os botões de filtro
+    document.querySelector('.btn-filter.todas').addEventListener('click', () => applyFilter('todas'));
+    document.querySelector('.btn-filter.pendentes').addEventListener('click', () => applyFilter('pendentes'));
+    document.querySelector('.btn-filter.concluidas').addEventListener('click', () => applyFilter('concluidas'));
+
+    applyFilter('todas'); // Inicializa aplicando o filtro "Todas"
     updateCompletedActions();
-    updateUnprioritizedVisibility();
 });

@@ -1,3 +1,18 @@
+:root {
+    --primary-teal: #055755;
+    /* Verde escuro principal */
+    --accent-teal: #076b6a;
+    /* Verde claro (usado no botão adicionar) */
+    --low-priority: #28a745;
+    /* Verde de prioridade baixa */
+    --medium-priority: #ffc107;
+    /* Amarelo de prioridade média */
+    --high-priority: #dc3545;
+    /* Vermelho de prioridade alta/excluir */
+    --bg-gray: #f4f4f9;
+    /* Fundo da página */
+}
+
 body {
     font-family: Arial, sans-serif;
     max-width: 960px;
@@ -5,12 +20,21 @@ body {
     margin: 30px auto;
     /* Ajuste na margem superior/inferior */
     padding: 0 20px;
-    background-color: #f4f4f9;
+    background-color: var(--bg-gray);
 }
 
-h1 {
-    color: #333;
+.main-title {
+    color: var(--primary-teal);
     margin: 0;
+}
+
+.section-title {
+    color: var(--primary-teal);
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align:center;
 }
 
 .header-container {
@@ -34,6 +58,18 @@ h1 {
     box-shadow: 0 2px 4px;
 }
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 #priorityInput {
     border-radius: 4px;
     padding: 10px;
@@ -49,7 +85,7 @@ h1 {
 }
 
 .error-message {
-    color: #dc3545;
+    color: var(--high-priority);
     margin-top: -15px;
     margin-bottom: 10px;
     height: 1em;
@@ -67,27 +103,32 @@ h1 {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #076b6a;
+    background-color: var(--accent-teal);
     color: white;
     border: none;
     border-radius: 4px;
 }
 
 #addBtn:hover {
-    background-color: #055755;
+    background-color: var(--primary-teal);
 }
 
 .btn-filter {
     cursor: pointer;
     background-color: #e9ebec;
-    border: 1px solid #055755;
-    color: #055755;
+    border: 1px solid var(--primary-teal);
+    color: var(--primary-teal);
     padding: 8px 12px;
     border-radius: 6px;
 }
 
 .btn-filter:hover {
     background-color: #ccc;
+}
+
+.btn-filter.active {
+    background-color: var(--primary-teal);
+    color: white;
 }
 
 ul {
@@ -106,20 +147,22 @@ li {
     gap: 8px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    min-height: 48px; /* Garante altura mínima para tarefas */
-    border-left: 5px solid transparent; /* Adiciona espaço para a cor da prioridade */
+    min-height: 48px;
+    /* Garante altura mínima para tarefas */
+    border-left: 5px solid transparent;
+    /* Adiciona espaço para a cor da prioridade */
 }
 
 li.priority-low {
-    border-left-color: #28a745;
+    border-left-color: var(--low-priority);
 }
 
 li.priority-medium {
-    border-left-color: #ffc107;
+    border-left-color: var(--medium-priority);
 }
 
 li.priority-high {
-    border-left-color: #dc3545;
+    border-left-color: var(--high-priority);
 }
 
 .baixa,
@@ -130,15 +173,20 @@ li.priority-high {
 }
 
 .baixa {
-    background-color: #28a745;
+    background-color: var(--low-priority);
+    color: #ffffff;
+
 }
 
 .media {
-    background-color: #ffc107;
+    background-color: var(--medium-priority);
+    color: #000000;
 }
 
 .alta {
-    background-color: #dc3545;
+    background-color: var(--high-priority);
+    color: #ffffff;
+
 }
 
 .completed-checkbox {
@@ -147,7 +195,8 @@ li.priority-high {
 }
 
 .task-text {
-    min-width: 0; /* Permite que o texto encolha dentro do flex container */
+    min-width: 0;
+    /* Permite que o texto encolha dentro do flex container */
     word-break: normal;
     overflow-wrap: break-word;
     white-space: normal;
@@ -155,7 +204,8 @@ li.priority-high {
 
 .edit-input {
     flex: 1;
-    min-width: 0; /* Permite que o input encolha */
+    min-width: 0;
+    /* Permite que o input encolha */
     padding: 5px;
     font-size: 16px;
     margin-right: 10px;
@@ -169,8 +219,8 @@ li.priority-high {
     border-radius: 4px;
     border: 1px solid #ccc;
     font-size: 0.9em;
-    margin-right: 50px; 
-    width: 10em; 
+    margin-right: 50px;
+    width: 10em;
 }
 
 .completed-task .task-text {
@@ -211,13 +261,13 @@ li.priority-high {
 }
 
 .delete-btn {
-    background-color: #dc3545;
+    background-color: var(--high-priority);
     color: white;
     padding: 1px 5px;
 }
 
 .edit-btn {
-    background-color: #ffc107;
+    background-color: var(--medium-priority);
     color: #333;
     padding: 1px 5px;
 }
@@ -281,7 +331,6 @@ li.priority-high {
 .completed-header h2 {
     grid-column: 2;
     margin: 0;
-    color: #055755;
     padding: 16px;
 }
 
@@ -320,7 +369,7 @@ li.priority-high {
 }
 
 .field {
-    background-color: #055755;
+    background-color: var(--primary-teal);
 }
 
 .tasks-container {
@@ -335,10 +384,6 @@ li.priority-high {
     border: 1px solid transparent;
     border-radius: 4px;
     transition: border-color 0.2s ease;
-}
-
-.completed-task:hover {
-    border-color: #b6adad;
 }
 
 .completed-task:hover {
@@ -368,10 +413,9 @@ li.priority-high {
     border: solid 1px #b6adad;
 }
 
-.priority-column h3 {
+.priority-column h2 {
     text-align: center;
     margin-top: 0;
-    color: #ffffff;
     font-size: 1em;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
@@ -385,7 +429,7 @@ li.priority-high {
     margin-bottom: 20px;
 }
 
-#unprioritized-container h3 {
+#unprioritized-container h2 {
     text-align: center;
     margin: 0 0 10px 0;
     color: #555;
