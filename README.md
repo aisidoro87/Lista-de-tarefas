@@ -2,45 +2,34 @@
 
 ![Banner do Projeto](assets/lista-de-tarefas.png)
 
-Uma aplicação web moderna e intuitiva para gerenciamento de tarefas, desenvolvida com foco em simplicidade e usabilidade, utilizando apenas HTML, CSS e JavaScript puro (Vanilla JS).
+Uma aplicação web moderna e intuitiva para gerenciamento de tarefas, desenvolvida com foco em simplicidade, usabilidade e acessibilidade, utilizando apenas HTML, CSS e JavaScript puro (Vanilla JS).
 
 ---
 
 ## ✨ Funcionalidades Principais
 
-- **Adicionar Tarefas:** Campo de texto para inserir novas tarefas de forma rápida.
-- **Editar Tarefas:** Edição do texto da tarefa diretamente na linha, sem a necessidade de pop-ups ou modais.
-- **Concluir Tarefas:** Mova tarefas da lista de pendentes para uma seção de "Tarefas Concluídas", registrando automaticamente a data e a hora da conclusão.
+- **Adicionar Tarefas:** Campo de texto com validação e seleção obrigatória de prioridades.
+- **Organização por Prioridade:** Colunas visuais para prioridades (Baixa, Média e Alta) com suporte para arrastar e soltar (*drag and drop*).
+- **Editar Tarefas:** Edição rápida do texto da tarefa diretamente na linha, alterando a descrição acessível de forma dinâmica.
+- **Concluir Tarefas:** Mova tarefas para a seção de "Tarefas Concluídas", registrando automaticamente a data e a hora da conclusão.
+- **Filtros Inteligentes:** Botões para alternar a exibição da tela entre "Todas", "Pendentes" e "Concluídas".
 - **Exclusão Segura:**
-    - Remova tarefas pendentes com uma etapa de confirmação para evitar exclusões acidentais.
-    - Exclua tarefas concluídas individualmente.
-- **Limpeza em Massa:** Botão para remover todas as tarefas da lista de concluídas de uma só vez.
-- **Validação de Entrada:** Mensagem de erro amigável é exibida caso o usuário tente adicionar uma tarefa vazia.
+    - Confirmação de segurança ao excluir tarefas pendentes para evitar exclusões acidentais.
+    - Seleção múltipla e exclusão em lote para tarefas concluídas.
+- **Persistência de Dados:** Salvamento automático de todas as tarefas no `localStorage` do navegador.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **HTML5:** Para a estrutura semântica da página.
-- **CSS3:** Para a estilização, layout (Flexbox) e design visual.
-- **JavaScript (Vanilla):** Para toda a lógica, interatividade e manipulação do DOM.
+- **HTML5 Semântico:** Estrutura bem definida e hierarquia de títulos otimizada.
+- **CSS3:** Estilização responsiva (Grid/Flexbox), transições suaves e uso de variáveis CSS (`:root`) para padronização da paleta de cores.
+- **JavaScript (Vanilla JS):** Manipulação dinâmica de elementos no DOM, eventos interativos e persistência de dados.
+- **Acessibilidade (a11y):** Inclusão de rótulos descritivos (`aria-label`) para leitores de tela e ocultação visual de textos de suporte com a classe `.sr-only`, garantindo usabilidade inclusiva para todos os usuários.
 
 ---
 
-## 📂 Como Executar
-
-Não há necessidade de instalação de dependências. Basta seguir os passos abaixo:
-
-1. Clone este repositório (se estiver no GitHub):
-   ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   ```
-2. Navegue até a pasta do projeto.
-3. Abra o arquivo `index.html` no seu navegador de preferência.
-
----
-
-## 🏗️ Estrutura do Projeto
+## 📂 Estrutura do Projeto
 ```
 /
 ├── assets/
@@ -52,4 +41,15 @@ Não há necessidade de instalação de dependências. Basta seguir os passos ab
 └── style.css
 ```
 
- ## 🌐Desenvolvido com ☕ e ❤️ por Anderson Isidoro
+---
+
+## 🚀 Como Executar
+
+Não há necessidade de instalação de dependências complexas. Basta seguir os passos abaixo:
+
+1. Abra a pasta do projeto em sua máquina local.
+2. Dê um duplo clique no arquivo `index.html` para abri-lo diretamente no seu navegador web preferido.
+
+---
+
+## 🌐 Desenvolvido com ☕ e ❤️ por Anderson Isidoro
