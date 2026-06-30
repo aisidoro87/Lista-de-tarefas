@@ -52,10 +52,9 @@ function createTaskNode(text, initialPriority = null) {
 
     li.draggable = true;// Permite arrastar a tarefa para reordenar ou mudar de coluna
 
-    li.addEventListener('dragstart', () => { // Evento para iniciar o arrasto da tarefa
-        draggedTask = li; // Armazena a tarefa sendo arrastada
-    });
-
+    li.addEventListener('dragstart', () => { // Evento para iniciar o arrasto da tarefa                                            
+            draggedTask = li; // Armazena a tarefa sendo arrastada                                                                     
+        });  
     if (initialPriority) {
         li.classList.add(`priority-${initialPriority}`);
         li.dataset.priority = initialPriority;
@@ -75,22 +74,32 @@ function createTaskNode(text, initialPriority = null) {
     editBtn.setAttribute('aria-label', 'Editar tarefa');
     editBtn.className = 'action-btn edit-btn';
     editBtn.innerHTML = '&#9998;'; // Símbolo de lápis
+
+    const finishEdit = (save) => {
+        if (!li.classList.contains('editing')) return;
+
+        li.classList.remove('editing');
+
+        const input = li.querySelector('.edit-input');
+        if (input) {
+            const newText = input.value.trim();
+            if (save && newText !== '') {
+                span.textContent = newText;
+            }
+            input.remove();
+        }
+
+        span.style.display = '';
+        editBtn.innerHTML = '&#9998;'; // Retorna o símbolo de lápis
+        editBtn.setAttribute('aria-label', 'Editar tarefa');
+        completeBtn.style.display = '';
+        deleteBtn.style.display = '';
+        saveTasks();
+    };
+
     editBtn.onclick = () => {
         if (li.classList.contains('editing')) {
-            const input = li.querySelector('.edit-input');
-            const newText = input.value.trim();
-
-            if (newText !== '') {
-                span.textContent = newText;
-                input.remove();
-                span.style.display = '';
-                editBtn.innerHTML = '&#9998;';// Retorna o símbolo de lápis
-                editBtn.setAttribute('aria-label', 'Editar tarefa');
-                li.classList.remove('editing');
-                completeBtn.style.display = '';
-                deleteBtn.style.display = '';
-                saveTasks();
-            }
+            finishEdit(true);
         } else {
             span.style.display = 'none';
             completeBtn.style.display = 'none';
@@ -101,6 +110,22 @@ function createTaskNode(text, initialPriority = null) {
             input.value = span.textContent;
             li.insertBefore(input, divActions);
             input.focus();
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    finishEdit(true);
+                } else if (e.key === 'Escape') {
+                    finishEdit(false);
+                }
+            });
+
+            input.addEventListener('blur', (e) => {
+                if (e.relatedTarget === editBtn) {
+                    return;
+                }
+                finishEdit(true);
+            });
+
             editBtn.innerHTML = '&#10004;';
             editBtn.setAttribute('aria-label', 'Salvar alteração');
             li.classList.add('editing');
@@ -365,61 +390,98 @@ completedTaskList.addEventListener('change', (e) => {
     }
 });
 
-lowPriorityColumn.addEventListener('dragover', (e) => {// Permite que a tarefa seja arrastada para esta coluna
-    e.preventDefault();
-});
-
-mediumPriorityColumn.addEventListener('dragover', (e) => {// Permite que a tarefa seja arrastada para esta coluna
-    e.preventDefault();
-});
-
-highPriorityColumn.addEventListener('dragover', (e) => { // Permite que a tarefa seja arrastada para esta coluna
-    e.preventDefault();
-});
-
-lowPriorityColumn.addEventListener('drop', () => {
-    if (!draggedTask) return;
-    lowPriorityList.appendChild(draggedTask);
-    draggedTask.classList.remove(
-        'priority-low',
-        'priority-medium',
-        'priority-high'
-    );
-    draggedTask.classList.add('priority-low');
-    draggedTask.dataset.priority = 'low';
-
-    saveTasks();
-});
-
-mediumPriorityColumn.addEventListener('drop', () => {
-    if (!draggedTask) return;
-    mediumPriorityList.appendChild(draggedTask);
-    draggedTask.classList.remove(
-        'priority-low',
-        'priority-medium',
-        'priority-high'
-    );
-
-    draggedTask.classList.add('priority-medium');
-    draggedTask.dataset.priority = 'medium';
-
-    saveTasks();
-});
-
-highPriorityColumn.addEventListener('drop', () => {
-    if (!draggedTask) return;
-    highPriorityList.appendChild(draggedTask);
-    draggedTask.classList.remove(
-        'priority-low',
-        'priority-medium',
-        'priority-high'
-    );
-
-    draggedTask.classList.add('priority-high');
-    draggedTask.dataset.priority = 'high';
-
-    saveTasks();
-});
+// --- Eventos de Drag & Drop para Baixa Prioridade ---                                                                            
+    lowPriorityColumn.addEventListener('dragover', (e) => {                                                                            
+        e.preventDefault(); // Permite que o elemento seja solto aqui                                                                  
+    });                                                                                                                                
+                                                                                                                                       
+    lowPriorityColumn.addEventListener('dragenter', () => {                                                                            
+        // Incrementa o contador de entrada da coluna (se não existir, inicia em 0)                                                    
+        lowPriorityColumn.dragCounter = (lowPriorityColumn.dragCounter || 0) + 1;                                                      
+        lowPriorityColumn.classList.add('drag-over');                                                                                  
+    });                                                                                                                                
+                                                                                                                                       
+    lowPriorityColumn.addEventListener('dragleave', () => {                                                                            
+        // Decrementa o contador ao sair                                                                                               
+        lowPriorityColumn.dragCounter = (lowPriorityColumn.dragCounter || 0) - 1;                                                      
+        // Só remove o estilo visual se saímos completamente da coluna e de todos os filhos (contador = 0)                             
+        if (lowPriorityColumn.dragCounter === 0) {                                                                                     
+            lowPriorityColumn.classList.remove('drag-over');                                                                           
+        }                                                                                                                              
+    });                                                                                                                                
+                                                                                                                                       
+    lowPriorityColumn.addEventListener('drop', () => {                                                                                 
+        lowPriorityColumn.dragCounter = 0; // Reseta o contador ao soltar                                                              
+        lowPriorityColumn.classList.remove('drag-over');                                                                               
+        if (!draggedTask) return;                                                                                                      
+                                                                                                                                       
+        lowPriorityList.appendChild(draggedTask);                                                                                      
+        draggedTask.classList.remove('priority-low', 'priority-medium', 'priority-high');                                              
+        draggedTask.classList.add('priority-low');                                                                                     
+        draggedTask.dataset.priority = 'low';                                                                                          
+                                                                                                                                       
+        saveTasks();                                                                                                                   
+    });                                                                                                                                
+                                                                                                                                       
+    // --- Eventos de Drag & Drop para Média Prioridade ---                                                                            
+    mediumPriorityColumn.addEventListener('dragover', (e) => {                                                                         
+        e.preventDefault();                                                                                                            
+    });                                                                                                                                
+                                                                                                                                       
+    mediumPriorityColumn.addEventListener('dragenter', () => {                                                                         
+        mediumPriorityColumn.dragCounter = (mediumPriorityColumn.dragCounter || 0) + 1;                                                
+        mediumPriorityColumn.classList.add('drag-over');                                                                               
+    });                                                                                                                                
+                                                                                                                                       
+    mediumPriorityColumn.addEventListener('dragleave', () => {                                                                         
+        mediumPriorityColumn.dragCounter = (mediumPriorityColumn.dragCounter || 0) - 1;                                                
+        if (mediumPriorityColumn.dragCounter === 0) {                                                                                  
+            mediumPriorityColumn.classList.remove('drag-over');                                                                        
+        }                                                                                                                              
+    });                                                                                                                                
+                                                                                                                                       
+    mediumPriorityColumn.addEventListener('drop', () => {                                                                              
+        mediumPriorityColumn.dragCounter = 0;                                                                                          
+        mediumPriorityColumn.classList.remove('drag-over');                                                                            
+        if (!draggedTask) return;                                                                                                      
+                                                                                                                                       
+        mediumPriorityList.appendChild(draggedTask);                                                                                   
+        draggedTask.classList.remove('priority-low', 'priority-medium', 'priority-high');                                              
+        draggedTask.classList.add('priority-medium');                                                                                  
+        draggedTask.dataset.priority = 'medium';                                                                                       
+                                                                                                                                       
+        saveTasks();                                                                                                                   
+    });                                                                                                                                
+                                                                                                                                       
+    // --- Eventos de Drag & Drop para Alta Prioridade ---                                                                             
+    highPriorityColumn.addEventListener('dragover', (e) => {                                                                           
+        e.preventDefault();                                                                                                            
+    });                                                                                                                                
+                                                                                                                                       
+    highPriorityColumn.addEventListener('dragenter', () => {                                                                           
+        highPriorityColumn.dragCounter = (highPriorityColumn.dragCounter || 0) + 1;                                                    
+        highPriorityColumn.classList.add('drag-over');                                                                                 
+    });                                                                                                                                
+                                                                                                                                       
+    highPriorityColumn.addEventListener('dragleave', () => {                                                                           
+        highPriorityColumn.dragCounter = (highPriorityColumn.dragCounter || 0) - 1;                                                    
+        if (highPriorityColumn.dragCounter === 0) {                                                                                    
+            highPriorityColumn.classList.remove('drag-over');                                                                          
+        }                                                                                                                              
+    });                                                                                                                                
+                                                                                                                                       
+    highPriorityColumn.addEventListener('drop', () => {                                                                                
+        highPriorityColumn.dragCounter = 0;                                                                                            
+        highPriorityColumn.classList.remove('drag-over');                                                                              
+        if (!draggedTask) return;                                                                                                      
+                                                                                                                                       
+        highPriorityList.appendChild(draggedTask);                                                                                     
+        draggedTask.classList.remove('priority-low', 'priority-medium', 'priority-high');                                              
+        draggedTask.classList.add('priority-high');                                                                                    
+        draggedTask.dataset.priority = 'high';                                                                                         
+                                                                                                                                       
+        saveTasks();                                                                                                                   
+    });           
 
 document.addEventListener('DOMContentLoaded', () => { // Carrega as tarefas do Local Storage ao iniciar a aplicação
     loadTasks();

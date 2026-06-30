@@ -272,6 +272,11 @@ li.priority-high {
     padding: 1px 5px;
 }
 
+li.editing .edit-btn {
+    background-color: #17a2b8;
+    color: white;
+}
+
 .complete-btn {
     background-color: #17a2b8;
     color: white;
@@ -391,18 +396,17 @@ li.priority-high {
     border-radius: 4px;
 }
 
-.priority-column {
-    flex: 1;
-    background-color: #f9f9f9;
-    border-radius: 4px;
-    padding: 10px;
-    min-height: 100px;
-    border: 1px solid transparent;
-    transition: border 0.2s ease;
-    border-radius: 4px;
-    background-color: #f8f4f4;
-
-}
+.priority-column {                                                                                                                 
+        flex: 1;                                                                                                                       
+        background-color: #f9f9f9;                                                                                                     
+        border-radius: 4px;                                                                                                            
+        padding: 10px;                                                                                                                 
+        min-height: 100px;                                                                                                             
+        border: 1px solid transparent;                                                                                                 
+        transition: border 0.2s ease, background-color 0.2s ease, transform 0.2s ease;                                                                                                  
+        border-radius: 4px;                                                                                                            
+        background-color: #f8f4f4;                                                                                                     
+    }     
 
 .priority-column ul {
     min-height: 150px;
@@ -437,6 +441,14 @@ li.priority-high {
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
 }
+
+ .priority-column.drag-over {                                                                                                       
+        background-color: rgba(5, 87, 85, 0.05); /* Fundo verde translúcido e suave */                                                 
+        border: 2px dashed var(--accent-teal); /* Borda tracejada verde */                                                             
+        box-shadow: 0 4px 15px rgba(5, 87, 85, 0.15); /* Sombra suave para dar profundidade */                                         
+        transform: scale(1.01); /* Um leve zoom para destacar a coluna ativa */                                                        
+    }                                                                                                                                  
+          
 
 /* --- Responsividade --- */
 @media (max-width: 600px) {
