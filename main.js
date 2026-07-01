@@ -12,6 +12,7 @@ let draggedTask = null; // Variável para armazenar a tarefa sendo arrastada
 const lowPriorityColumn = document.getElementById('low-priority');
 const mediumPriorityColumn = document.getElementById('medium-priority');
 const highPriorityColumn = document.getElementById('high-priority');
+const themeToggle = document.getElementById('themeToggle');                                                                        
 
 let currentFilter = 'todas'; // Filtro ativo padrão
 
@@ -482,6 +483,24 @@ completedTaskList.addEventListener('change', (e) => {
                                                                                                                                        
         saveTasks();                                                                                                                   
     });           
+
+     // Verifica se o usuário tem alguma preferência salva no navegador                                                                 
+    if (localStorage.getItem('theme') === 'dark') {                                                                                    
+        document.body.classList.add('dark-mode');                                                                                      
+        themeToggle.textContent = '☀️'; // Muda o ícone para o Sol no modo escuro                                                      
+    }                                                                                                                                  
+                                                                                                                                       
+    themeToggle.addEventListener('click', () => {                                                                                      
+        document.body.classList.toggle('dark-mode');                                                                                   
+                                                                                                                                       
+        if (document.body.classList.contains('dark-mode')) {                                                                           
+            themeToggle.textContent = '☀️';                                                                                            
+            localStorage.setItem('theme', 'dark'); // Salva preferência escuro                                                         
+        } else {                                                                                                                       
+            themeToggle.textContent = '🌙';                                                                                            
+            localStorage.setItem('theme', 'light'); // Salva preferência claro                                                         
+        }                                                                                                                              
+    }); 
 
 document.addEventListener('DOMContentLoaded', () => { // Carrega as tarefas do Local Storage ao iniciar a aplicação
     loadTasks();

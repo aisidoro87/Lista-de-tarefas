@@ -10,6 +10,9 @@
 
 <body>
     <div class="container-tarefas">
+        <!-- Botão para alternar Modo Claro / Modo Escuro -->
+        <button id="themeToggle" class="theme-toggle-btn" aria-label="Alternar tema">🌙</button>
+
         <div class="header-container">
             <h1 class="main-title">Minhas Tarefas</h1>
             <img src="assets/lista-de-tarefas.png" alt="Ícone lista de tarefas">
@@ -20,7 +23,7 @@
             <label for="taskInput" class="sr-only">Nova tarefa</label>
             <input type="text" id="taskInput" placeholder="Digite uma nova tarefa...">
 
-                <label for="priorityInput" class="sr-only">Prioridade da tarefa</label>
+            <label for="priorityInput" class="sr-only">Prioridade da tarefa</label>
 
             <select id="priorityInput">
                 <option value="">Prioridade</option>
@@ -63,7 +66,8 @@
             <h2 class="section-title">Tarefas Concluídas</h2>
             <div class="completed-bulk-actions">
 
-                <input type="checkbox" id="selectAllCompleted" aria-label="Selecionar todas as tarefas concluídas" title="Selecionar Todas">
+                <input type="checkbox" id="selectAllCompleted" aria-label="Selecionar todas as tarefas concluídas"
+                    title="Selecionar Todas">
                 <button id="deleteSelectedBtn" class="clear-btn" style="display: none;">Excluir Selecionados</button>
             </div>
         </div>

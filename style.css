@@ -1,26 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');     
+
 :root {
-    --primary-teal: #055755;
-    /* Verde escuro principal */
-    --accent-teal: #076b6a;
-    /* Verde claro (usado no botão adicionar) */
-    --low-priority: #28a745;
-    /* Verde de prioridade baixa */
-    --medium-priority: #ffc107;
-    /* Amarelo de prioridade média */
-    --high-priority: #dc3545;
-    /* Vermelho de prioridade alta/excluir */
-    --bg-gray: #f4f4f9;
-    /* Fundo da página */
+    --primary-teal: #055755;    /* Verde escuro principal */
+    --accent-teal: #076b6a;    /* Verde claro (usado no botão adicionar) */
+    --low-priority: #28a745;    /* Verde de prioridade baixa */
+    --medium-priority: #ffc107;    /* Amarelo de prioridade média */
+    --high-priority: #dc3545;    /* Vermelho de prioridade alta/excluir */
+    --bg-gray: #f4f4f9;    /* Fundo da página */
+    --bg-container: #ffffff;
+    --bg-card: #ffffff;
+    --bg-column: #f8f4f4;
+    --text-color: #333333;
+    --border-color: #cccccc;
+    --filter-bg: #e9ebec;
+    --filter-hover-bg: #d2d6d8;
+    --priority-black: #000000;
+    --complete-btn: #17a2b8;
+    --clear-btn: #6c757d;
 }
 
+/* Redefinição das variáveis quando o Modo Escuro estiver ativo */
+body.dark-mode {
+    --primary-teal: #4db6ac;    /* Verde mais claro para melhor legibilidade no escuro */
+    --accent-teal: #80cbc4;
+    --bg-gray: #121212;    /* Fundo escuro da página */
+    --bg-container: #1e1e1e;    /* Fundo das seções */
+    --bg-card: #2d2d2d;    /* Fundo dos cards de tarefas */
+    --bg-column: #252525;    /* Fundo das colunas */
+    --text-color: #e0e0e0;    /* Texto claro */
+    --border-color: #444444;
+    --filter-bg: #2d2d2d;
+    --filter-hover-bg: #3d3d3d;
+    --border-color: #b6adad;
+    --column-color: #eee;
+}
+
+ body.dark-mode .btn-filter:not(.active):hover {                                                                                    
+        background-color: #3d3d3d;                                                                                                     
+    } 
+
 body {
-    font-family: Arial, sans-serif;
-    max-width: 960px;
-    /* Aumentado para dar mais espaço */
-    margin: 30px auto;
-    /* Ajuste na margem superior/inferior */
+
+    font-family: 'Plus Jakarta Sans', sans-serif; /* Mude a fonte aqui */                                                          
+        max-width: 960px;                                                                                                              
+        margin: 30px auto;                                                                                                             
+        padding: 0 20px;                                                                                                               
+        background-color: var(--bg-gray);                                                                                              
+        color: var(--text-color);                                                                                                      
+        transition: background-color 0.3s ease, color 0.3s ease;                                                                       
+        line-height: 1.6; /* Melhor legibilidade do texto */ 
+
+    /*font-family: Arial, sans-serif;
+    max-width: 960px;    
+    margin: 30px auto;    
     padding: 0 20px;
     background-color: var(--bg-gray);
+    color: var(--text-color);     
+    transition: background-color 0.3s ease, color 0.3s ease;*/
 }
 
 .main-title {
@@ -34,7 +70,7 @@ body {
     margin-bottom: 10px;
     font-size: 1.3em;
     font-weight: bold;
-    text-align:center;
+    text-align: center;
 }
 
 .header-container {
@@ -52,10 +88,20 @@ body {
 }
 
 .container-tarefas {
-    background-color: #ffffff;
+    position: relative;                                                                                                            
+    background-color: var(--bg-container);                                                                                         
+    border-radius: 12px; /* Mude de 4px para 12px */                                                                               
+    padding: 20px; /* Aumente o espaçamento interno */                                                                             
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Sombra mais difusa e moderna */                                                
+    color: var(--text-color);                                                                                                      
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; 
+    /*position: relative;
+    background-color: var(--bg-container);
     border-radius: 4px;
     padding: 10px;
-    box-shadow: 0 2px 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);                                                                                     
+    color: var(--text-color);                                                                      
+    transition: background-color 0.3s ease, color 0.3s ease; */
 }
 
 .sr-only {
@@ -73,9 +119,11 @@ body {
 #priorityInput {
     border-radius: 4px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     font-size: 16px;
     cursor: pointer;
+    background-color: var(--bg-card);                                                 
+    color: var(--text-color);
 }
 
 .input-group {
@@ -94,36 +142,47 @@ body {
 #taskInput {
     flex: 1;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 4px 10px;
+    background-color: var(--bg-card);                                                 
+    color: var(--text-color);
 }
 
 #addBtn {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: var(--accent-teal);
-    color: white;
-    border: none;
-    border-radius: 4px;
+    padding: 10px 20px;                                                                                                            
+    font-size: 16px;                                                                                                               
+    cursor: pointer;                                                                                                               
+    background-color: var(--accent-teal);                                                                                          
+    color: white;                                                                                                                  
+    border: none;                                                                                                                  
+    border-radius: 8px; /* Mude de 4px para 8px */                                                                                 
+    font-weight: 500;                                                                                                              
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 #addBtn:hover {
-    background-color: var(--primary-teal);
+    background-color: var(--primary-teal);                                                                                         
+    box-shadow: 0 4px 10px rgba(5, 87, 85, 0.2); /* Cria sombra projetada */       
 }
+
+#addBtn:active {                                                                                                                   
+        transform: translateY(0); /* Efeito de clique físico */                                                                        
+    }   
 
 .btn-filter {
     cursor: pointer;
-    background-color: #e9ebec;
+    background-color: var(--filter-bg);
     border: 1px solid var(--primary-teal);
     color: var(--primary-teal);
     padding: 8px 12px;
     border-radius: 6px;
+    transition: background-color 0.2s ease;                                         
+
 }
 
 .btn-filter:hover {
-    background-color: #ccc;
+    background-color: var(--filter-hover-bg);
 }
 
 .btn-filter.active {
@@ -137,8 +196,8 @@ ul {
 }
 
 li {
-    background: white;
-    border-bottom: 1px solid #ddd;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
     padding: 10px;
     margin-bottom: 5px;
     display: flex;
@@ -147,10 +206,10 @@ li {
     gap: 8px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    min-height: 48px;
-    /* Garante altura mínima para tarefas */
-    border-left: 5px solid transparent;
-    /* Adiciona espaço para a cor da prioridade */
+    min-height: 48px;    /* Garante altura mínima para tarefas */
+    border-left: 5px solid transparent;    /* Adiciona espaço para a cor da prioridade */
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;  
 }
 
 li.priority-low {
@@ -174,18 +233,17 @@ li.priority-high {
 
 .baixa {
     background-color: var(--low-priority);
-    color: #ffffff;
-
+    color: var(bg-card);
 }
 
 .media {
     background-color: var(--medium-priority);
-    color: #000000;
+    color: var(--priority-black);
 }
 
 .alta {
     background-color: var(--high-priority);
-    color: #ffffff;
+    color: var(bg-card);
 
 }
 
@@ -209,7 +267,7 @@ li.priority-high {
     padding: 5px;
     font-size: 16px;
     margin-right: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
 }
 
@@ -217,7 +275,7 @@ li.priority-high {
 .priority-select {
     padding: 5px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     font-size: 0.9em;
     margin-right: 50px;
     width: 10em;
@@ -225,7 +283,7 @@ li.priority-high {
 
 .completed-task .task-text {
     text-decoration: line-through;
-    color: #6c757d;
+    color: var(--clear-btn);
 }
 
 .completed-task-content {
@@ -268,17 +326,17 @@ li.priority-high {
 
 .edit-btn {
     background-color: var(--medium-priority);
-    color: #333;
+    color: var(--text-color);
     padding: 1px 5px;
 }
 
 li.editing .edit-btn {
-    background-color: #17a2b8;
+    background-color: var(--complete-btn); 
     color: white;
 }
 
 .complete-btn {
-    background-color: #17a2b8;
+    background-color: var(--complete-btn);
     color: white;
     padding: 1px 5px;
 }
@@ -323,7 +381,7 @@ li.editing .edit-btn {
 
 .completion-date {
     font-size: 0.8em;
-    color: #6c757d;
+    color: var(--clear-btn);
 }
 
 .completed-header {
@@ -353,7 +411,7 @@ li.editing .edit-btn {
     padding: 4px 12px;
     font-size: 0.9em;
     cursor: pointer;
-    background-color: #6c757d;
+    background-color: var(--clear-btn);
     color: white;
     border: none;
     border-radius: 4px;
@@ -366,11 +424,20 @@ li.editing .edit-btn {
 }
 
 .container-completed {
-    margin-top: 10px;
-    background-color: #ffffff;
+    margin-top: 20px;                                                                                                              
+    background-color: var(--bg-container);                                                                                         
+    border-radius: 12px; /* Mude de 4px para 12px */                                                                               
+    padding: 20px; /* Aumente o espaçamento interno */                                                                             
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Sombra mais difusa */                                                          
+    color: var(--text-color);                                                                                                      
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    /*margin-top: 10px;
+    background-color: var(--bg-container);
     border-radius: 4px;
     padding: 10px;
-    box-shadow: 0 2px 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);                                                                                     
+    color: var(--text-color);                                                                       
+    transition: background-color 0.3s ease, color 0.3s ease; */  
 }
 
 .field {
@@ -392,36 +459,33 @@ li.editing .edit-btn {
 }
 
 .completed-task:hover {
-    border: solid 1px #b6adad;
+    border: solid 1px var(--border-color);
     border-radius: 4px;
 }
 
-.priority-column {                                                                                                                 
-        flex: 1;                                                                                                                       
-        background-color: #f9f9f9;                                                                                                     
-        border-radius: 4px;                                                                                                            
-        padding: 10px;                                                                                                                 
-        min-height: 100px;                                                                                                             
-        border: 1px solid transparent;                                                                                                 
-        transition: border 0.2s ease, background-color 0.2s ease, transform 0.2s ease;                                                                                                  
-        border-radius: 4px;                                                                                                            
-        background-color: #f8f4f4;                                                                                                     
-    }     
+.priority-column {
+    flex: 1;
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 100px;
+    border: 1px solid transparent;
+    transition: border 0.2s ease, background-color 0.3s ease, box-shadow 0.2s ease;
+    background-color: var(--bg-column);
+}
 
 .priority-column ul {
     min-height: 150px;
 }
 
 .priority-column:hover {
-    background-color: #f0eaea;
-    border: solid 1px #b6adad;
+    border: solid 1px var(--border-color);
 }
 
 .priority-column h2 {
     text-align: center;
     margin-top: 0;
     font-size: 1em;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--column-color);
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
@@ -438,17 +502,38 @@ li.editing .edit-btn {
     margin: 0 0 10px 0;
     color: #555;
     font-size: 1em;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--column-color);
     padding-bottom: 10px;
 }
 
- .priority-column.drag-over {                                                                                                       
-        background-color: rgba(5, 87, 85, 0.05); /* Fundo verde translúcido e suave */                                                 
-        border: 2px dashed var(--accent-teal); /* Borda tracejada verde */                                                             
-        box-shadow: 0 4px 15px rgba(5, 87, 85, 0.15); /* Sombra suave para dar profundidade */                                         
-        transform: scale(1.01); /* Um leve zoom para destacar a coluna ativa */                                                        
-    }                                                                                                                                  
-          
+.priority-column.drag-over {
+    background-color: rgba(5, 87, 85, 0.05);
+    /* Fundo verde translúcido e suave */
+    border: 2px dashed var(--accent-teal);
+    /* Borda tracejada verde */
+    box-shadow: 0 4px 15px rgba(5, 87, 85, 0.15);
+    /* Sombra suave para dar profundidade */
+    transform: scale(1.01);
+    /* Um leve zoom para destacar a coluna ativa */
+}
+
+.theme-toggle-btn {    
+            position: absolute;
+            top: 15px;
+            right: 15px;                                                                                                        
+            background: none;                                                                                                          
+            border: none;                                                                                                              
+            font-size: 1.5rem;                                                                                                         
+            cursor: pointer;                                                                                                           
+            padding: 5px;                                                                                                              
+            border-radius: 50%;                                                                                                        
+            transition: transform 0.2s ease;       
+            z-index: 10;                                                                                    
+        }                                                                                                                              
+                                                                                                                                       
+        .theme-toggle-btn:hover {                                                                                                      
+            transform: scale(1.2);                                                                                                    
+        }  
 
 /* --- Responsividade --- */
 @media (max-width: 600px) {
